@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Sebastian.Api.Domain;
 
 namespace Sebastian.Api
 {
@@ -26,9 +28,14 @@ namespace Sebastian.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var appSettings = BuildAppSettings();
+            
+            services.AddDbContext<SebastianDbContext>(opt => 
+                opt.UseSqlServer(appSettings.Database.ConnectionString));
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSingleton(BuildAppSettings());
+            services.AddSingleton(appSettings);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
