@@ -22,15 +22,57 @@ Task Run-Tests {
     Set-Location -Path $basePath
 }
 
+Task Refresh-Dev-Database {
+    Drop-Database DEV
+    Update-Database DEV
+}
+
 Task Update-Dev-Database {
     Update-Database DEV
+}
+
+Task Drop-Dev-Database {
+    Drop-Database DEV
+}
+
+Task Refresh-Test-Database {
+    Drop-Database TEST
+    Update-Database TEST
 }
 
 Task Update-Test-Database {
     Update-Database TEST
 }
 
+Task Drop-Test-Database {
+    Drop-Database TEST
+}
+
 function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) {
+    $migrationsProject =  "Sebastian.Database"
+    $roundhouseExePath = "$basepath\tools\rh.exe"
+    $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
+
+    $migrationsScriptsPath = "$srcPath\$migrationsProject"
+    $roundhouseVersionFile = "$srcPath\Sebastian.Database\bin\$configuration\$targetFramework\$migrationsProject.dll"
+
+    foreach ($environment in $environments) {
+        $connectionString = $connectionStrings[$environment]
+
+    Write-Host "Executing RoundhousE for environment:" $environment
+
+    exec { & $roundhouseExePath --connectionstring $connectionString `
+                                    --commandtimeout 300 `
+                                    --env $environment `
+                                    --output $roundhouseOutputDir `
+                                    --sqlfilesdirectory $migrationsScriptsPath `
+                                    --versionfile $roundhouseVersionFile `
+                                    --transaction `
+                                    --silent }
+    }
+}
+
+function Drop-Database([Parameter(ValueFromRemainingArguments)]$environments) {
     $migrationsProject =  "Sebastian.Database"
     $roundhouseExePath = "$basepath\tools\rh.exe"
     $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
@@ -45,11 +87,7 @@ function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) 
 
     exec { & $roundhouseExePath --connectionstring $connectionString `
                                     --commandtimeout 300 `
-                                    --env $environment `
-                                    --output $roundhouseOutputDir `
-                                    --sqlfilesdirectory $migrationScriptsPath `
-                                    --versionfile $roundhouseVersionFile `
-                                    --transaction `
+                                    --drop `
                                     --silent }
     }
 }
