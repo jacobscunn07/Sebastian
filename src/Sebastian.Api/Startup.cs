@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,8 @@ namespace Sebastian.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSingleton(BuildAppSettings());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +45,19 @@ namespace Sebastian.Api
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private static AppSettings BuildAppSettings()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+
+            var config = builder.Build();
+
+            var appConfig = new AppSettings();
+            config.Bind(appConfig);
+            return appConfig;
         }
     }
 }
