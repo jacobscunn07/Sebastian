@@ -25,6 +25,7 @@ CREATE TABLE ExerciseType_ExerciseTypeAttribute (
   , ExerciseTypeAttributeId UNIQUEIDENTIFIER NOT NULL 
   , CONSTRAINT FK_ExerciseTypeExerciseTypeAttribute_ExerciseTypeId FOREIGN KEY (ExerciseTypeId) REFERENCES ExerciseType(Id)
   , CONSTRAINT FK_ExerciseTypeExerciseTypeAttribute_ExerciseTypeAttributeId FOREIGN KEY (ExerciseTypeAttributeId) REFERENCES ExerciseTypeAttribute(Id)
+  , CONSTRAINT UC_ExerciseType_ExerciseTypeAttribute_ExerciseTypeId_ExerciseTypeAttributeId UNIQUE (ExerciseTypeId, ExerciseTypeAttributeId)
 )
 
 -- Bench Press

@@ -8,8 +8,12 @@ namespace Sebastian.Api.Domain.Maps
     {
         public void Configure(EntityTypeBuilder<Workout> builder)
         {
+            builder.ToTable("Workout");
+            
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Name).HasMaxLength(128);
+            
+            builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            
             builder.Property(x => x.DateTimeBegan).IsRequired();
         }
     }
