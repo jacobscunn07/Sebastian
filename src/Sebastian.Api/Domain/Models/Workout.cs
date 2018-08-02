@@ -11,7 +11,7 @@ namespace Sebastian.Api.Domain.Models
         
         public DateTime DateTimeBegan { get; set; }
         
-        public DateTime DateTimeFinished { get; set; }
+        public DateTime? DateTimeFinished { get; set; }
 
         public List<WorkoutSuperset> WorkoutSupersets { get; set; }
     }

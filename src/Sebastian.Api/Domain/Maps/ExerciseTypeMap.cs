@@ -13,12 +13,6 @@ namespace Sebastian.Api.Domain.Maps
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
-
-            builder
-                .HasOne(x => x.Exercise)
-                .WithOne(x => x.ExerciseType)
-                .HasForeignKey<Exercise>(x => x.ExerciseTypeId)
-                .HasForeignKey<ExerciseType>(x => x.ExerciseId);
         }
     }
 }

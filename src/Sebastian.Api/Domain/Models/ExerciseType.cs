@@ -11,7 +11,7 @@ namespace Sebastian.Api.Domain.Models
 
         public Guid ExerciseId { get; set; }
 
-        public Exercise Exercise { get; set; }
+        public List<Exercise> Exercises { get; set; }
 
         public List<ExerciseTypeExerciseTypeAttribute> ExerciseTypeExerciseTypeAttributes { get; set; }
     }

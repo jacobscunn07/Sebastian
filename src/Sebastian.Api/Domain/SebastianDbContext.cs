@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Sebastian.Api.Domain.Maps;
 using Sebastian.Api.Domain.Models;
 
@@ -6,6 +11,8 @@ namespace Sebastian.Api.Domain
 {
     public class SebastianDbContext : DbContext
     {
+        private IDbContextTransaction _currentTransaction;
+        
         public SebastianDbContext(DbContextOptions options)
             : base(options)
         {
@@ -20,10 +27,42 @@ namespace Sebastian.Api.Domain
         public DbSet<WorkoutSupersetExerciseSet> WorkoutSupersetExerciseSets { get; set; }
         public DbSet<WorkoutSupersetExerciseSetAttribute> WorkoutSupersetExerciseSetAttributes { get; set; }
 
+        public void BeginTransaction()
+        {
+            if (_currentTransaction != null)
+                return;
+
+            _currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
+        }
+
+        public void CloseTransaction(Exception exception = null)
+        {
+            try
+            {
+                if (exception != null)
+                {
+                    _currentTransaction.Rollback();
+                    return;
+                }
+
+                SaveChanges();
+
+                _currentTransaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                _currentTransaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                _currentTransaction.Dispose();
+                _currentTransaction = null;
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            
             modelBuilder.ApplyConfiguration(new ExerciseMap());
             modelBuilder.ApplyConfiguration(new ExerciseTypeAttributeMap());
             modelBuilder.ApplyConfiguration(new ExerciseTypeExerciseTypeAttributeMap());
@@ -33,6 +72,8 @@ namespace Sebastian.Api.Domain
             modelBuilder.ApplyConfiguration(new WorkoutSupersetExerciseMap());
             modelBuilder.ApplyConfiguration(new WorkoutSupersetExerciseSetMap());
             modelBuilder.ApplyConfiguration(new WorkoutSupersetExerciseSetAttributeMap());
+            
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

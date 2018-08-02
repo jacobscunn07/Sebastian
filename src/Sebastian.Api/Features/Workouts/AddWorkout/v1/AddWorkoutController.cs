@@ -15,6 +15,7 @@ namespace Sebastian.Api.Features.Workouts.AddWorkout.v1
         [HttpPost("api/v1/workouts")]
         public IActionResult Index()
         {
+            _mediator.Send(new AddWorkoutCommand());
             return Json(new {value = "test"});
         }
     }

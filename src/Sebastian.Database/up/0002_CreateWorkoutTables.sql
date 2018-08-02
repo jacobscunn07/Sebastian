@@ -3,9 +3,9 @@ CREATE TABLE Workout (
 		CONSTRAINT PK_Workout_Id PRIMARY KEY
 		CONSTRAINT DF_Workout_Id DEFAULT NEWID()
 	, [Name] VARCHAR(128) NOT NULL
-	, DateTimeBegan DATETIME NOT NULL
+	, DateTimeBegan DATETIME2 NOT NULL
 	  CONSTRAINT DF_Workout_DateTimeBegan DEFAULT CURRENT_TIMESTAMP 
-	, DateTimeFinished DATETIME
+	, DateTimeFinished DATETIME2
 )
 
 CREATE TABLE WorkoutSuperset (

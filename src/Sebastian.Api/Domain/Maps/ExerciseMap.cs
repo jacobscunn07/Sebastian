@@ -16,9 +16,8 @@ namespace Sebastian.Api.Domain.Maps
 
             builder
                 .HasOne(x => x.ExerciseType)
-                .WithOne(x => x.Exercise)
-                .HasForeignKey<ExerciseType>(x => x.ExerciseId)
-                .HasForeignKey<Exercise>(x => x.ExerciseTypeId);
+                .WithMany(x => x.Exercises)
+                .HasForeignKey(x => x.ExerciseTypeId);
         }
     }
 }
