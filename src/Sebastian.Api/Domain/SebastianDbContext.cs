@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Sebastian.Api.Domain.Maps;
@@ -27,7 +28,24 @@ namespace Sebastian.Api.Domain
         public DbSet<WorkoutSupersetExerciseSet> WorkoutSupersetExerciseSets { get; set; }
         public DbSet<WorkoutSupersetExerciseSetAttribute> WorkoutSupersetExerciseSetAttributes { get; set; }
 
-        public void BeginTransaction()
+        public async Task<T> RunTransaction<T>(Func<T> action)
+        {
+            try
+            {
+                BeginTransaction();
+                var result = action();
+                EndTransaction();
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                EndTransaction(e);
+                throw;
+            }
+        }
+
+        private void BeginTransaction()
         {
             if (_currentTransaction != null)
                 return;
@@ -35,7 +53,7 @@ namespace Sebastian.Api.Domain
             _currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
-        public void CloseTransaction(Exception exception = null)
+        private async Task EndTransaction(Exception exception = null)
         {
             try
             {
@@ -45,7 +63,7 @@ namespace Sebastian.Api.Domain
                     return;
                 }
 
-                SaveChanges();
+                await SaveChangesAsync();
 
                 _currentTransaction.Commit();
             }
