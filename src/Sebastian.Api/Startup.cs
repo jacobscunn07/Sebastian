@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sebastian.Api.Domain;
+using Sebastian.Api.Features.Workouts.AddWorkout.v1;
 using Sebastian.Api.Infrastructure;
 
 namespace Sebastian.Api
@@ -35,7 +37,9 @@ namespace Sebastian.Api
             services.AddDbContext<SebastianDbContext>(opt => 
                 opt.UseSqlServer(appSettings.Database.ConnectionString));
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AddWorkoutCommandValidator>());
 
             services.AddMediatR();
 

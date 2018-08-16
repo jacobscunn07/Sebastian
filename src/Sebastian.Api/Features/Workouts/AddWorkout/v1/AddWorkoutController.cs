@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Sebastian.Api.Features.Workouts.AddWorkout.v1
@@ -13,10 +15,15 @@ namespace Sebastian.Api.Features.Workouts.AddWorkout.v1
         }
         
         [HttpPost("api/v1/workouts")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index([FromBody]AddWorkoutCommand command)
         {
-            _mediator.Send(new AddWorkoutCommand { Name = "test" });
-            return Json(new {value = "test"});
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage));
+            }
+            
+            var response = await _mediator.Send(command);
+            return Json(response);
         }
     }
 }

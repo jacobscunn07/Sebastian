@@ -34,13 +34,13 @@ namespace Sebastian.Api.Domain
             {
                 BeginTransaction();
                 var result = action();
-                EndTransaction();
+                await EndTransaction();
                 return result;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                EndTransaction(e);
+                await EndTransaction(e);
                 throw;
             }
         }
