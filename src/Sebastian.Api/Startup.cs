@@ -50,6 +50,7 @@ namespace Sebastian.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseMiddleware<UserPrincipalMiddleware>();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             
             if (env.IsDevelopment())
             {
