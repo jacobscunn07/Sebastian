@@ -45,6 +45,22 @@ namespace Sebastian.Api.Domain
             }
         }
 
+        public void RunTransaction(Action action)
+        {
+            try
+            {
+                BeginTransaction();
+                action();
+                EndTransaction();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                EndTransaction(e);
+                throw;
+            }
+        }
+
         private void BeginTransaction()
         {
             if (_currentTransaction != null)
@@ -53,17 +69,17 @@ namespace Sebastian.Api.Domain
             _currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
-        private async Task EndTransaction(Exception exception = null)
+        private Task EndTransaction(Exception exception = null)
         {
             try
             {
                 if (exception != null)
                 {
                     _currentTransaction.Rollback();
-                    return;
+                    return Task.CompletedTask;
                 }
 
-                await SaveChangesAsync();
+                SaveChanges();
 
                 _currentTransaction.Commit();
             }
@@ -77,6 +93,8 @@ namespace Sebastian.Api.Domain
                 _currentTransaction.Dispose();
                 _currentTransaction = null;
             }
+
+            return Task.CompletedTask;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
