@@ -1,0 +1,1 @@
+﻿INSERT INTO [User] (Id, GivenName, Surname) VALUES('59DC3D2F-DC14-41F2-A75E-1371FC866AE8', 'Jacob', 'Cunningham')
