@@ -14,5 +14,9 @@ namespace Sebastian.Api.Domain.Models
         public DateTime? DateTimeFinished { get; set; }
 
         public List<WorkoutSuperset> WorkoutSupersets { get; set; }
+
+        public Guid UserId { get; set; }
+
+        public User User { get; set; }
     }
 }

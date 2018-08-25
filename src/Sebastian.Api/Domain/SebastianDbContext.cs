@@ -99,6 +99,7 @@ namespace Sebastian.Api.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new ExerciseMap());
             modelBuilder.ApplyConfiguration(new ExerciseTypeAttributeMap());
             modelBuilder.ApplyConfiguration(new ExerciseTypeExerciseTypeAttributeMap());
