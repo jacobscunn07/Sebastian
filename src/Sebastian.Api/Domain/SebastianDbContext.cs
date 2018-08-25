@@ -22,6 +22,7 @@ namespace Sebastian.Api.Domain
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<ExerciseType> ExerciseTypes { get; set; }
         public DbSet<ExerciseTypeAttribute> ExerciseTypeAttributes { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutSuperset> WorkoutSupersets { get; set; }
         public DbSet<WorkoutSupersetExercise> WorkoutSupersetExercises { get; set; }

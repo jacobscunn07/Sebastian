@@ -28,6 +28,7 @@ namespace Sebastian.Api.Features.Workouts.AddWorkout.v1
                 var workout = new Workout
                 {
                     Id = Guid.NewGuid(),
+                    UserId = request.UserId,
                     Name = request.Name,
                     DateTimeBegan = DateTime.UtcNow
                 };
