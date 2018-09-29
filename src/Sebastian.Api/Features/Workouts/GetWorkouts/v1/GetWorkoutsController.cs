@@ -17,13 +17,18 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
         [HttpGet("")]
         public IActionResult GetAll()
         {
-            return Json("Test");
+            return Json(_mediator.Send(new GetWorkoutsQuery()).Result);
         }
 
         [HttpGet("{workoutId}")]
         public IActionResult Get(Guid workoutId)
         {
-            return Json("Test");
+            if (workoutId == null || workoutId == Guid.Empty)
+            {
+                throw new ArgumentException();
+            }
+
+            return Json(_mediator.Send(new GetWorkoutsQuery {WorkoutId = workoutId}).Result);
         }
     }
 }
