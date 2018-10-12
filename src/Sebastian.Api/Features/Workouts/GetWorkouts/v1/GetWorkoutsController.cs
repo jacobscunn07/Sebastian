@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,9 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
                 throw new ArgumentException();
             }
 
-            return Json(_mediator.Send(new GetWorkoutsQuery {WorkoutId = workoutId}).Result);
+            var result = _mediator.Send(new GetWorkoutsQuery {WorkoutId = workoutId}).Result;
+            var workout = result.Workouts.FirstOrDefault();
+            return Json(workout);
         }
     }
 }
