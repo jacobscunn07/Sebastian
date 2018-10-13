@@ -1,13 +1,24 @@
 $basePath = Get-Location
 $srcPath = "$basePath\src"
+$apiProject = "$srcPath\Sebastian.Api"
+$testProject = "$srcPath\Sebastian.Tests"
 $targetFramework = "netcoreapp2.1"
 $configuration = 'Debug'
-$testsProjPath = "$srcPath\Sebastian.Tests"
+#$testsProjPath = "$srcPath\Sebastian.Tests"
 $databaseProjPath = "$srcPath\Sebastian.Database"
 
+function Get-App-Settings($projectPath) {
+    return Get-Content -Raw -Path "$projectPath\appsettings.json" | Out-String | ConvertFrom-Json
+}
+
+function Get-Connection-String($projectPath) {
+    $json = Get-App-Settings $projectPath
+    return $json.Database.ConnectionString
+}
+
 $connectionStrings = @{
-    DEV = "Server=.;Database=Sebastian_Dev;Trusted_Connection=True;";
-    TEST = "Server=.;Database=Sebastian_Test;Trusted_Connection=True;";
+    DEV = Get-Connection-String $apiProject;
+    TEST = Get-Connection-String $testProject;
 }
 
 Task Build -Before Run-Tests {
@@ -17,7 +28,7 @@ Task Build -Before Run-Tests {
 }
 
 Task Run-Tests {
-    Set-Location -Path $testsProjPath
+    Set-Location -Path $testProject
     dotnet fixie
     Set-Location -Path $basePath
 }
