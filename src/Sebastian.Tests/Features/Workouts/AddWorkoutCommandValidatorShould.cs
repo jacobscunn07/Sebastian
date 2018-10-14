@@ -5,7 +5,6 @@ namespace Sebastian.Tests.Features.Workouts
 {
     public class AddWorkoutCommandValidatorShould
     {
-        
         public void ValidateSuccessfully()
         {
             var validator = new AddWorkoutCommandValidator();
