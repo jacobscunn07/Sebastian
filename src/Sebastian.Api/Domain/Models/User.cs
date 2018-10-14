@@ -5,6 +5,11 @@ namespace Sebastian.Api.Domain.Models
 {
     public class User
     {
+        public User()
+        {
+            Workouts = new List<Workout>();
+        }
+
         public Guid Id { get; set; }
 
         public string GivenName { get; set; }

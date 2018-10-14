@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using MediatR;
 using Sebastian.Api.Domain;
 using Sebastian.Api.Domain.Models;
@@ -22,7 +23,7 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
         {
             if (request.WorkoutId == null || request.WorkoutId == Guid.Empty)
             {
-                return GetWorkoutsList();
+                return GetWorkoutsList(request.UserId);
             }
 
             return GetWorkout(request.WorkoutId);
@@ -54,9 +55,21 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
             
         }
 
-        private Task<GetWorkoutsResponse> GetWorkoutsList()
+        private Task<GetWorkoutsResponse> GetWorkoutsList(Guid userId)
         {
-            throw new NotImplementedException();
+            var workouts = _db.Workouts.Where(x => x.UserId == userId).ToList();
+
+            return Task.FromResult(new GetWorkoutsResponse
+            {
+                Workouts = workouts.Select(x => new GetWorkoutsResponse.Workout
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    DateTimeBegan = x.DateTimeBegan,
+                    DateTimeFinished = x.DateTimeFinished
+                })
+            });
+            
         }
     }
 }

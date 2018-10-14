@@ -5,7 +5,7 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
 {
     public class GetWorkoutsResponse
     {
-        public IList<Workout> Workouts { get; set; }
+        public IEnumerable<Workout> Workouts { get; set; }
 
         public class Workout
         {
