@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -46,18 +44,18 @@ namespace Sebastian.Api.Domain
             }
         }
 
-        public void RunTransaction(Action action)
+        public async Task RunTransaction(Action action)
         {
             try
             {
                 BeginTransaction();
                 action();
-                EndTransaction();
+                await EndTransaction();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                EndTransaction(e);
+                await EndTransaction(e);
                 throw;
             }
         }
@@ -70,17 +68,16 @@ namespace Sebastian.Api.Domain
             _currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
-        private Task EndTransaction(Exception exception = null)
+        private async Task EndTransaction(Exception exception = null)
         {
             try
             {
                 if (exception != null)
                 {
                     _currentTransaction.Rollback();
-                    return Task.CompletedTask;
                 }
 
-                SaveChanges();
+                await SaveChangesAsync();
 
                 _currentTransaction.Commit();
             }
@@ -94,8 +91,6 @@ namespace Sebastian.Api.Domain
                 _currentTransaction.Dispose();
                 _currentTransaction = null;
             }
-
-            return Task.CompletedTask;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
