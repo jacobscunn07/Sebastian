@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Shouldly;
+using Sebastian.Api.Infrastructure;
 
 namespace Sebastian.Tests.Features.Workouts
 {
@@ -27,6 +28,7 @@ namespace Sebastian.Tests.Features.Workouts
                 };
                 db.Add(_user);
             });
+            Testing.Resolve<IUserPrincipal>().User = _user;
         }
 
         public async Task GetUserWorkoutById()
@@ -41,9 +43,8 @@ namespace Sebastian.Tests.Features.Workouts
             });
             await db.SaveChangesAsync();
             var workout = _user.Workouts.FirstOrDefault();
-            var query = new GetWorkoutsQuery { UserId = _user.Id, WorkoutId = workout.Id };
+            var query = new GetWorkoutsQuery { WorkoutId = workout.Id };
             var result = mediator.Send(query).Result;
-
             result.Workouts.ToList().Count.ShouldBe(_user.Workouts.Count);
             result.Workouts.FirstOrDefault().Id.ShouldBe(workout.Id);
         }
@@ -64,9 +65,8 @@ namespace Sebastian.Tests.Features.Workouts
                 DateTimeBegan = DateTime.UtcNow,
             });
             await db.SaveChangesAsync();
-            var query = new GetWorkoutsQuery { UserId = _user.Id };
+            var query = new GetWorkoutsQuery();
             var result = mediator.Send(query).Result;
-
             result.Workouts.Count().ShouldBe(_user.Workouts.Count());
         }
     }

@@ -2,13 +2,13 @@
 
 namespace Sebastian.Api.Infrastructure
 {
-    public class UserPrincipal
+    public class UserPrincipal : IUserPrincipal
     {
         public UserPrincipal(User user)
         {
             User = user;
         }
 
-        public User User { get; }
+        public User User { get; set; }
     }
 }

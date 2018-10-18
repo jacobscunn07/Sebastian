@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Sebastian.Api.Domain;
 using Sebastian.Api.Domain.Models;
 using Sebastian.Api.Features.Workouts.AddWorkout.v1;
@@ -45,7 +39,7 @@ namespace Sebastian.Api
             services.AddMediatR();
 
             services.AddSingleton(appSettings);
-            services.AddScoped(context =>
+            services.AddScoped<IUserPrincipal>(context =>
             {
                 var db = context.GetService<SebastianDbContext>();
                 var user = db.Find<User>(Guid.Parse("59DC3D2F-DC14-41F2-A75E-1371FC866AE8"));
@@ -56,7 +50,6 @@ namespace Sebastian.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseMiddleware<UserPrincipalMiddleware>();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             
             if (env.IsDevelopment())

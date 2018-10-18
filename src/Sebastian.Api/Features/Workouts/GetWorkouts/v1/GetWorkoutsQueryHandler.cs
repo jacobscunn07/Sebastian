@@ -13,17 +13,19 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
     public class GetWorkoutsQueryHandler : IRequestHandler<GetWorkoutsQuery, GetWorkoutsResponse>
     {
         private readonly SebastianDbContext _db;
+        private readonly IUserPrincipal _userPrincipal;
 
-        public GetWorkoutsQueryHandler(SebastianDbContext db)
+        public GetWorkoutsQueryHandler(SebastianDbContext db, IUserPrincipal userPrincipal)
         {
             _db = db;
+            _userPrincipal = userPrincipal;
         }
         
         public Task<GetWorkoutsResponse> Handle(GetWorkoutsQuery request, CancellationToken cancellationToken)
         {
             if (request.WorkoutId == null || request.WorkoutId == Guid.Empty)
             {
-                return GetWorkoutsList(request.UserId);
+                return GetWorkoutsList(_userPrincipal.User.Id);
             }
 
             return GetWorkout(request.WorkoutId);
