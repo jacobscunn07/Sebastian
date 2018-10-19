@@ -17,16 +17,12 @@ namespace Sebastian.Tests.Features.Workouts
         {
             var db = Testing.Resolve<SebastianDbContext>();
             await db.RunTransaction(() =>
-                {
-                    db.Workouts.Clear();
-                    _user = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        GivenName = "Test",
-                        Surname = "Test"
-                    };
-                    db.Add(_user);
-                });
+            {
+                db.Workouts.Clear();
+                db.Users.Clear();
+                _user = Mother.GetHydratedUser();
+                db.Add(_user);
+            });
         }
         
         public async Task SaveWorkout()

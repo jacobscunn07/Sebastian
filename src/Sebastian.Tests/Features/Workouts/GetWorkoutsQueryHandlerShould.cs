@@ -20,12 +20,8 @@ namespace Sebastian.Tests.Features.Workouts
             await db.RunTransaction(() =>
             {
                 db.Workouts.Clear();
-                _user = new User
-                {
-                    Id = Guid.NewGuid(),
-                    GivenName = "Test",
-                    Surname = "Test"
-                };
+                db.Users.Clear();
+                _user = Mother.GetHydratedUser();
                 db.Add(_user);
             });
             Testing.Resolve<IUserPrincipal>().User = _user;
@@ -45,7 +41,7 @@ namespace Sebastian.Tests.Features.Workouts
             var workout = _user.Workouts.FirstOrDefault();
             var query = new GetWorkoutsQuery { WorkoutId = workout.Id };
             var result = mediator.Send(query).Result;
-            result.Workouts.ToList().Count.ShouldBe(_user.Workouts.Count);
+            result.Workouts.ToList().Count.ShouldBe(1);
             result.Workouts.FirstOrDefault().Id.ShouldBe(workout.Id);
         }
 

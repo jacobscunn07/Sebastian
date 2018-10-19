@@ -18,12 +18,8 @@ namespace Sebastian.Tests.Features.Workouts
             await db.RunTransaction(() =>
             {
                 db.Workouts.Clear();
-                _user = new User
-                {
-                    Id = Guid.NewGuid(),
-                    GivenName = "Test",
-                    Surname = "Test"
-                };
+                db.Users.Clear();
+                _user = Mother.GetHydratedUser();
                 db.Add(_user);
             });
             Testing.Resolve<IUserPrincipal>().User = _user;
