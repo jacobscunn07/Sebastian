@@ -60,5 +60,31 @@ namespace Sebastian.Tests.Features.Workouts
             var result = mediator.Send(query).Result;
             result.Workouts.Count().ShouldBe(_user.Workouts.Count());
         }
+
+        public async Task DisallowUserToViewAnotherUsersWorkout()
+        {
+            var db = Testing.Resolve<SebastianDbContext>();
+            var workout = new Workout
+            {
+                UserId = _user.Id,
+                Name = "My workout",
+                DateTimeBegan = DateTime.UtcNow
+            };
+            db.Workouts.Add(workout);
+            await db.SaveChangesAsync();
+            var command = new GetWorkoutsQuery { WorkoutId = workout.Id };
+            var anotherUser = new User
+            {
+                Id = Guid.NewGuid(),
+                GivenName = "Test1",
+                Surname = "Test2"
+            };
+            db.Add(anotherUser);
+            var userPrincipal = Testing.Resolve<IUserPrincipal>();
+            userPrincipal.User = anotherUser;
+            var validator = new GetWorkoutsQueryValidator(db, userPrincipal);
+            var result = validator.Validate(command);
+            result.IsValid.ShouldBe(false);
+        }
     }
 }

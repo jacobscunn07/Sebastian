@@ -26,6 +26,7 @@ namespace Sebastian.Tests.Features.Workouts
             var validator = new GetWorkoutsQueryValidator(db, Testing.Resolve<IUserPrincipal>());
             var workout = new Workout
             {
+                Id = Guid.NewGuid(),
                 UserId = _user.Id,
                 Name = "My workout",
                 DateTimeBegan = DateTime.UtcNow
@@ -37,28 +38,18 @@ namespace Sebastian.Tests.Features.Workouts
             result.IsValid.ShouldBe(true);
         }
 
-        public async Task DisallowUserToViewAnotherUsersWorkout()
+        public void FailToFindWorkoutAssociatedWithUser()
         {
             var db = Testing.Resolve<SebastianDbContext>();
+            var validator = new GetWorkoutsQueryValidator(db, Testing.Resolve<IUserPrincipal>());
             var workout = new Workout
             {
+                Id = Guid.NewGuid(),
                 UserId = _user.Id,
                 Name = "My workout",
                 DateTimeBegan = DateTime.UtcNow
             };
-            db.Workouts.Add(workout);
-            await db.SaveChangesAsync();
             var command = new GetWorkoutsQuery { WorkoutId = workout.Id };
-            var anotherUser = new User
-            {
-                Id = Guid.NewGuid(),
-                GivenName = "Test1",
-                Surname = "Test2"
-            };
-            db.Add(anotherUser);
-            var userPrincipal = Testing.Resolve<IUserPrincipal>();
-            userPrincipal.User = anotherUser;
-            var validator = new GetWorkoutsQueryValidator(db, userPrincipal);
             var result = validator.Validate(command);
             result.IsValid.ShouldBe(false);
         }
