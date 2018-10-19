@@ -1,4 +1,5 @@
 ﻿using Fixie;
+using Respawn;
 
 namespace Sebastian.Tests
 {
@@ -28,9 +29,8 @@ namespace Sebastian.Tests
                 var instance = testClass.Construct();
 
                 TestServiceScope.Begin();
-
-                //Reset Database
-                //Reset database to a specific state likely using respawn
+                
+                GetRespawnCheckpoint().Reset("Server=.;Database=Sebastian_Test;Trusted_Connection=True;");
 
                 SetUp(instance);
 
@@ -40,6 +40,17 @@ namespace Sebastian.Tests
 
                 instance.Dispose();
             });
+        }
+
+        private Checkpoint GetRespawnCheckpoint()
+        {
+            return new Checkpoint
+            {
+                SchemasToExclude = new[]
+                {
+                    "RoundhousE"
+                }
+            };
         }
     }
 }
