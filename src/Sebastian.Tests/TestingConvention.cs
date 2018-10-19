@@ -1,5 +1,6 @@
 ﻿using Fixie;
 using Respawn;
+using Sebastian.Api;
 
 namespace Sebastian.Tests
 {
@@ -30,7 +31,7 @@ namespace Sebastian.Tests
 
                 TestServiceScope.Begin();
                 
-                GetRespawnCheckpoint().Reset("Server=.;Database=Sebastian_Test;Trusted_Connection=True;");
+                GetRespawnCheckpoint().Reset(Testing.Resolve<AppSettings>().Database.ConnectionString);
 
                 SetUp(instance);
 

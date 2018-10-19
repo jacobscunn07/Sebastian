@@ -3,7 +3,6 @@ using Sebastian.Api.Domain;
 using Sebastian.Api.Features.Workouts.AddWorkout.v1;
 using Shouldly;
 using Sebastian.Api.Infrastructure;
-using System;
 using Sebastian.Api.Domain.Models;
 using System.Threading.Tasks;
 
