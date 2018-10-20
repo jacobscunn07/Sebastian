@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sebastian.Api.Infrastructure;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Sebastian.Api.Features.Workouts.AddWorkout.v1
 {
+    [ApiExplorerSettings(GroupName = "Workouts")]
     public class AddWorkoutController : Controller
     {
         private readonly IMediator _mediator;

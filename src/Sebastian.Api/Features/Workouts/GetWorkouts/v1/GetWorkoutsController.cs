@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
 {
+    [ApiExplorerSettings(GroupName = "Workouts")]
     [Route("api/v1/workouts")]
     public class GetWorkoutsController : Controller
     {

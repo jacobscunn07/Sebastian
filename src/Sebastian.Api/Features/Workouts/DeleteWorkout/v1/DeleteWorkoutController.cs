@@ -6,6 +6,7 @@ using Sebastian.Api.Domain;
 
 namespace Sebastian.Api.Features.Workouts.DeleteWorkout.v1
 {
+    [ApiExplorerSettings(GroupName = "Workouts")]
     [Route("api/v1/workout")]
     public class DeleteWorkoutController : Controller
     {
@@ -18,6 +19,7 @@ namespace Sebastian.Api.Features.Workouts.DeleteWorkout.v1
             _mediator = mediator;
             _db = db;
         }
+
         
         [HttpDelete("{workoutId}")]
         public IActionResult Delete(Guid workoutId)

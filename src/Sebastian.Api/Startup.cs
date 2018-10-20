@@ -12,6 +12,7 @@ using Sebastian.Api.Domain;
 using Sebastian.Api.Domain.Models;
 using Sebastian.Api.Features.Workouts.AddWorkout.v1;
 using Sebastian.Api.Infrastructure;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Sebastian.Api
 {
@@ -45,11 +46,23 @@ namespace Sebastian.Api
                 var user = db.Find<User>(Guid.Parse("59DC3D2F-DC14-41F2-A75E-1371FC866AE8"));
                 return new UserPrincipal(user);
             });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Sebastian API", Version = "v1" });
+                c.DocInclusionPredicate((_, api) => !string.IsNullOrWhiteSpace(api.GroupName));
+                c.TagActionsBy(api => api.GroupName);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sebastian API V1");
+            });
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             
             if (env.IsDevelopment())

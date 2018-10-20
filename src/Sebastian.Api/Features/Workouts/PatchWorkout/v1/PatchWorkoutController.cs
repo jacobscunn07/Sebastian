@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Sebastian.Api.Features.Workouts.PatchWorkout.v1
 {
-    [Route("api/v1/workout")]
+    [ApiExplorerSettings(GroupName = "Workouts")]
+    [Route("api/v1/workouts")]
     public class PatchWorkoutController : Controller
     {
         private readonly IMediator _mediator;
