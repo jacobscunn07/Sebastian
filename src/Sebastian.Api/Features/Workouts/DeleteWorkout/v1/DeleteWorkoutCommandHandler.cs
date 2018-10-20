@@ -13,17 +13,14 @@ namespace Sebastian.Api.Features.Workouts.DeleteWorkout.v1
         {
             _db = db;
         }
-        
+
         protected override Task Handle(DeleteWorkoutCommand request, CancellationToken cancellationToken)
         {
-            _db.RunTransaction(() =>
-            {
-                var workout = _db.Workouts.Find(request.WorkoutId);
-                _db.Remove(workout);
-            });
-            
-
-            return Task.CompletedTask;
+            return _db.RunTransaction(() =>
+             {
+                 var workout = _db.Workouts.Find(request.WorkoutId);
+                 _db.Remove(workout);
+             });
         }
     }
 }

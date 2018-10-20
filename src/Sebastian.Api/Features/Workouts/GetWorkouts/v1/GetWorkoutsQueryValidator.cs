@@ -27,5 +27,7 @@ namespace Sebastian.Api.Features.Workouts.GetWorkouts.v1
 
             return _db.Workouts.Any(x => x.Id == workoutId && x.UserId == _userPrincipal.User.Id);
         }
+
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FizzWare.NBuilder;
-using FizzWare.NBuilder.Implementation;
 using Sebastian.Api.Domain.Models;
 using System.Linq;
 
