@@ -9,7 +9,7 @@ using Sebastian.Api.Infrastructure;
 namespace Sebastian.Api.Features.Workouts.DeleteWorkout.v1
 {
     [ApiExplorerSettings(GroupName = "Workouts")]
-    [Route("api/v1/workout")]
+    [Route("api/v1/workouts")]
     public class DeleteWorkoutController : Controller
     {
         private readonly IMediator _mediator;
