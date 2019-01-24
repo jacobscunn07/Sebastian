@@ -1,10 +1,13 @@
+. .\scripts\Update-Database.ps1
+. .\scripts\Drop-Database.ps1
+
 $basePath = Get-Location
 $srcPath = "$basePath/src"
 $apiProject = "$srcPath\Sebastian.Api"
 $testProject = "$srcPath\Sebastian.Tests"
 $targetFramework = "netcoreapp2.1"
 $configuration = 'Debug'
-$databaseProjPath = "$srcPath\Sebastian.Database"
+$databaseProjPath = "$srcPath/Sebastian.Database"
 
 function Get-App-Settings($projectPath) {
     return Get-Content -Raw -Path "$projectPath\appsettings.json" | Out-String | ConvertFrom-Json
@@ -15,10 +18,8 @@ function Get-Connection-String($projectPath) {
     return $json.Database.ConnectionString
 }
 
-$connectionStrings = @{
-    DEV = Get-Connection-String $apiProject;
-    TEST = Get-Connection-String $testProject;
-}
+$devConnectionString = Get-Connection-String $apiProject;
+$testConnectionString = Get-Connection-String $testProject;
 
 Task Build -Before Run-Tests {
     Set-Location -Path $srcPath
@@ -33,69 +34,27 @@ Task Run-Tests {
 }
 
 Task Refresh-Dev-Database {
-    Drop-Database DEV
-    Update-Database DEV
+    Drop-Database $devConnectionString
+    Update-Database $devConnectionString DEV $databaseProjPath
 }
 
 Task Update-Dev-Database {
-    Update-Database DEV
+    Update-Database $devConnectionString DEV $databaseProjPath
 }
 
 Task Drop-Dev-Database {
-    Drop-Database DEV
+    Drop-Database $devConnectionString
 }
 
 Task Refresh-Test-Database {
-    Drop-Database TEST
-    Update-Database TEST
+    Drop-Database $testConnectionString
+    Update-Database $testConnectionString TEST $databaseProjPath
 }
 
 Task Update-Test-Database {
-    Update-Database TEST
+    Update-Database $testConnectionString TEST $databaseProjPath
 }
 
 Task Drop-Test-Database {
-    Drop-Database TEST
-}
-
-function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) {
-    $migrationsProject =  "Sebastian.Database"
-    $roundhouseExePath = "$HOME\.dotnet\tools\rh"
-    $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
-
-    $migrationsScriptsPath = "$srcPath/$migrationsProject"
-    $roundhouseVersionFile = "$srcPath\Sebastian.Database\bin\$configuration\$targetFramework\$migrationsProject.dll"
-
-    foreach ($environment in $environments) {
-        $connectionString = $connectionStrings[$environment]
-
-    Write-Host "Executing RoundhousE for environment:" $environment
-
-    exec { & $roundhouseExePath --connectionstring $connectionString `
-                                    --commandtimeout 300 `
-                                    --env $environment `
-                                    --sqlfilesdirectory $migrationsScriptsPath `
-                                    --transaction `
-                                    --silent }
-    }
-}
-
-function Drop-Database([Parameter(ValueFromRemainingArguments)]$environments) {
-    $migrationsProject =  "Sebastian.Database"
-    $roundhouseExePath = "$HOME\.dotnet\tools\rh"
-    $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
-
-    $migrationScriptsPath ="/"
-    $roundhouseVersionFile = "$srcPath\Sebastian.Database\bin\$configuration\$targetFramework\$migrationsProject.dll"
-
-    foreach ($environment in $environments) {
-        $connectionString = $connectionStrings[$environment]
-
-    Write-Host "Executing RoundhousE for environment:" $environment
-
-    exec { & $roundhouseExePath --connectionstring $connectionString `
-                                    --commandtimeout 300 `
-                                    --drop `
-                                    --silent }
-    }
+    Drop-Database $testConnectionString
 }
