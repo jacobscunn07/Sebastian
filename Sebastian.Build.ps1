@@ -1,3 +1,5 @@
+. .\scripts\Delete-Database.ps1
+
 $basePath = Get-Location
 $srcPath = "$basePath\src"
 $apiProject = "$srcPath\Sebastian.Api"
@@ -59,6 +61,18 @@ Task Drop-Test-Database {
     Drop-Database TEST
 }
 
+Task Say-Hello {
+    SayHello
+}
+
+Task Try-Delete-Db {
+    Delete-Database -ConnectionString $connectionStrings["TEST"];
+}
+
+Task Exec-Rh {
+    rh
+}
+
 function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) {
     $migrationsProject =  "Sebastian.Database"
     $roundhouseExePath = "$basepath\tools\rh.exe"
@@ -101,4 +115,19 @@ function Drop-Database([Parameter(ValueFromRemainingArguments)]$environments) {
                                     --drop `
                                     --silent }
     }
+}
+
+function SayHello {
+    [CmdletBinding()]
+     param()
+    #  Import-Module SqlServer
+    # [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo")
+    $dbServer = New-Object Microsoft.SqlServer.Management.Smo.Server 'localhost'
+    $smoSecurePassword = 'P@ssw0rd'  | ConvertTo-SecureString -asPlainText -Force
+    $dbServer.ConnectionContext.LoginSecure = $false
+    $dbServer.ConnectionContext.set_Login('sa')            
+    $dbServer.ConnectionContext.set_SecurePassword($smoSecurePassword)
+    $dbServer.ConnectionContext.Connect() 
+    $db = $dbServer.Databases
+    Write-Host $db.Count
 }
