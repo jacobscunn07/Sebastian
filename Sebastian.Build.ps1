@@ -1,10 +1,9 @@
 $basePath = Get-Location
-$srcPath = "$basePath\src"
+$srcPath = "$basePath/src"
 $apiProject = "$srcPath\Sebastian.Api"
 $testProject = "$srcPath\Sebastian.Tests"
 $targetFramework = "netcoreapp2.1"
 $configuration = 'Debug'
-#$testsProjPath = "$srcPath\Sebastian.Tests"
 $databaseProjPath = "$srcPath\Sebastian.Database"
 
 function Get-App-Settings($projectPath) {
@@ -61,10 +60,10 @@ Task Drop-Test-Database {
 
 function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) {
     $migrationsProject =  "Sebastian.Database"
-    $roundhouseExePath = "$basepath\tools\rh.exe"
+    $roundhouseExePath = "$HOME\.dotnet\tools\rh"
     $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
 
-    $migrationsScriptsPath = "$srcPath\$migrationsProject"
+    $migrationsScriptsPath = "$srcPath/$migrationsProject"
     $roundhouseVersionFile = "$srcPath\Sebastian.Database\bin\$configuration\$targetFramework\$migrationsProject.dll"
 
     foreach ($environment in $environments) {
@@ -75,9 +74,7 @@ function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) 
     exec { & $roundhouseExePath --connectionstring $connectionString `
                                     --commandtimeout 300 `
                                     --env $environment `
-                                    --output $roundhouseOutputDir `
                                     --sqlfilesdirectory $migrationsScriptsPath `
-                                    --versionfile $roundhouseVersionFile `
                                     --transaction `
                                     --silent }
     }
@@ -85,7 +82,7 @@ function Update-Database([Parameter(ValueFromRemainingArguments)]$environments) 
 
 function Drop-Database([Parameter(ValueFromRemainingArguments)]$environments) {
     $migrationsProject =  "Sebastian.Database"
-    $roundhouseExePath = "$basepath\tools\rh.exe"
+    $roundhouseExePath = "$HOME\.dotnet\tools\rh"
     $roundhouseOutputDir = [System.IO.Path]::GetDirectoryName($roundhouseExePath) + "\output"
 
     $migrationScriptsPath ="/"
